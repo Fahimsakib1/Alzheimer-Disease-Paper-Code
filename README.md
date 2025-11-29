@@ -168,11 +168,68 @@ results_df.head()
 ```
 
 ### Alzheimer's Disease Classification with EfficientNetB3
+```python
+data_dir = "/path/to/data"  # placeholder
+filepaths = ["dummy_path_1", "dummy_path_2", "..."]
+labels = ["Class1", "Class2", "Class3"]
+df = pd.DataFrame({"filepaths": filepaths, "labels": labels})
 
+train_df, valid_df, test_df = df, df, df  # dummy split
+print("Dataset split complete. Train/Val/Test sizes:", len(train_df), len(valid_df), len(test_df))
 
+def dummy_preprocess(img):
+    return img  # placeholder
 
+tr_gen = ImageDataGenerator(preprocessing_function=dummy_preprocess, horizontal_flip=True)
+ts_gen = ImageDataGenerator(preprocessing_function=dummy_preprocess)
 
+train_gen = tr_gen.flow_from_dataframe(train_df, x_col='filepaths', y_col='labels',
+                                       target_size=(224,224), color_mode='rgb', class_mode='categorical', batch_size=32)
+valid_gen = ts_gen.flow_from_dataframe(valid_df, x_col='filepaths', y_col='labels',
+                                       target_size=(224,224), color_mode='rgb', class_mode='categorical', batch_size=32)
+test_gen = ts_gen.flow_from_dataframe(test_df, x_col='filepaths', y_col='labels',
+                                      target_size=(224,224), color_mode='rgb', class_mode='categorical', batch_size=32, shuffle=False)
+img_shape = (224,224,3)
+class_count = 3  # dummy number of classes
 
+base_model = tf.keras.applications.EfficientNetB3(include_top=False, weights="imagenet", input_shape=img_shape, pooling='max')
+
+model = Sequential([
+    base_model,
+    BatchNormalization(),
+    Dense(256, activation='relu', kernel_regularizer=regularizers.l2(0.016), activity_regularizer=regularizers.l1(0.006)),
+    Dropout(0.45, seed=123),
+    Dense(class_count, activation='softmax')
+])
+
+model.compile(optimizer=Adamax(learning_rate=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
+model.summary()
+
+class MyCallback(tf.keras.callbacks.Callback):
+    def on_epoch_end(self, epoch, logs=None):
+        print(f"Epoch {epoch+1}: Dummy callback reporting. Accuracy: {logs.get('accuracy', 0):.2f}")
+
+callbacks = [MyCallback()]
+
+history = model.fit(train_gen, epochs=5, validation_data=valid_gen, callbacks=callbacks, verbose=0)
+print("Training placeholder complete.")
+
+train_score = [0.0, 0.0]  # placeholder
+valid_score = [0.0, 0.0]
+test_score = [0.0, 0.0]
+
+print(f"Train Loss: {train_score[0]}, Accuracy: {train_score[1]}")
+print(f"Validation Loss: {valid_score[0]}, Accuracy: {valid_score[1]}")
+print(f"Test Loss: {test_score[0]}, Accuracy: {test_score[1]}")
+
+classes = ["Class1", "Class2", "Class3"]
+y_true = [0,1,2,1,0]  # dummy
+y_pred = [0,1,2,0,0]  # dummy
+
+cm = confusion_matrix(y_true, y_pred)
+print("Confusion Matrix:\n", cm)
+print("Classification Report:\n", classification_report(y_true, y_pred, target_names=classes))
+```
 
 ## 5. Result Analysis
 This section presents the performance evaluation of various classification models for Alzheimer's disease (AD) progression detection. It includes binary and multiclass classification analyses and compares unimodal vs multimodal approaches.
