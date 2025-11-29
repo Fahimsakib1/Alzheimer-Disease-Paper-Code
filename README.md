@@ -105,7 +105,7 @@ Performance of different models is compared based on accuracy, sensitivity, spec
   </tr>
 </table>
 
-### Alzheimer's Disease Classification (CNN Demo Version)
+### Alzheimer's Disease (CNN Demo Version)
 
 ```python
 for idx in range(16):
@@ -167,7 +167,7 @@ results_df = pd.DataFrame(history.history)
 results_df.head()
 ```
 
-### Alzheimer's Disease Classification with EfficientNetB3
+### Alzheimer's Disease with (EfficientNetB3 Demo Version)
 ```python
 data_dir = "/path/to/data"  # placeholder
 filepaths = ["dummy_path_1", "dummy_path_2", "..."]
