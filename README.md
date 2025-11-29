@@ -105,6 +105,74 @@ Performance of different models is compared based on accuracy, sensitivity, spec
   </tr>
 </table>
 
+### Alzheimer's Disease Classification (CNN Demo Version)
+
+```python
+for idx in range(16):
+    image = dataset_X[idx]
+    plt.subplot(4, 4, idx + 1)
+    plt.title(my_labels[dataset_y[idx]])
+    plt.gray()
+    plt.imshow(image)
+    plt.tight_layout()
+plt.show()
+
+new_X, new_y = [], []
+max_limit = 3000
+X_cat0, X_cat1, X_cat2 = dataset_X[dataset_y == 0], dataset_X[dataset_y == 1], dataset_X[dataset_y == 2]
+
+for lbl, X_group in zip(my_labels.keys(), [X_cat0, X_cat1, X_cat2]):
+    cnt = 0
+    for im in X_group:
+        if cnt > max_limit - label_counts[lbl]:
+            break
+        for _ in range(2):
+            aug_im = augmentation_pipeline(im)
+            new_X.append(aug_im)
+            new_y.append(lbl)
+            cnt += 1
+
+new_X, new_y = np.array(new_X), np.array(new_y)
+print(new_X.shape, new_y.shape)
+
+# Splitting dataset
+X_tv, X_tt, y_tv, y_tt = train_test_split(dataset_X, dataset_y, test_size=0.15, stratify=dataset_y)
+X_tr, X_val, y_tr, y_val = train_test_split(X_tv, y_tv, test_size=0.15, stratify=y_tv)
+
+print(X_tr.shape, X_val.shape, X_tt.shape)
+print(f"Total: {dataset_X.shape[0]}, Train: {X_tr.shape[0]}, Val: {X_val.shape[0]}, Test: {X_tt.shape[0]}")
+
+# Building the model
+cnn_model = tf.keras.Sequential([
+    tf.keras.layers.Conv2D(200, (3,3), activation="relu", input_shape=X_tr.shape[1:]),
+    tf.keras.layers.MaxPooling2D((3,3)),
+    tf.keras.layers.Conv2D(100, (3,3), activation="relu"),
+    tf.keras.layers.MaxPooling2D((3,3)),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(100, activation="relu"),
+    tf.keras.layers.Dense(50, activation="relu"),
+    tf.keras.layers.Dense(3, activation="softmax")
+])
+
+for i, layer in enumerate(cnn_model.layers):
+    print(f"Layer {i}:", layer.name, layer.output_shape, layer.count_params())
+
+# Callbacks
+cb_checkpoint = tf.keras.callbacks.ModelCheckpoint("my_model.h5", save_best_only=True)
+cb_early = tf.keras.callbacks.EarlyStopping(patience=5, restore_best_weights=True)
+
+history = cnn_model.fit(X_tr, y_tr, epochs=100, callbacks=[cb_checkpoint, cb_early], validation_data=(X_val, y_val))
+
+results_df = pd.DataFrame(history.history)
+results_df.head()
+```
+
+### Alzheimer's Disease Classification with EfficientNetB3
+
+
+
+
+
 
 ## 5. Result Analysis
 This section presents the performance evaluation of various classification models for Alzheimer's disease (AD) progression detection. It includes binary and multiclass classification analyses and compares unimodal vs multimodal approaches.
@@ -164,6 +232,9 @@ Comparison of unimodal (single data type) vs multimodal (combined data types) fo
 |            | SNP + Imaging       | CN, MCI/AD       | 0.62      | 0.55   | 0.57     | 63%      |
 
 * **Observations**: Imaging-based unimodal models outperform others (83%), while multimodal combinations improve accuracy but may struggle with integrating heterogeneous data.
+<img width="1206" height="595" alt="Screenshot 2025-11-29 213130" src="https://github.com/user-attachments/assets/42087073-a134-48f0-9643-0a3970992dbb" />
+Figure 4: Unimodal vs multimodal models comparison.
+
 
 ## 6. Discussions
 Our study evaluates multimodal approaches for analyzing the progression from Mild Cognitive Impairment (MCI) to Alzheimer's Disease (AD). Integrating imaging, clinical, and genetic data improves predictive accuracy, with multimodal models outperforming unimodal ones. In binary classification, traditional ML models such as LGBM, XGBoost, and Random Forest achieved high precision and recall, with LGBM performing best (96% accuracy). Deep learning models like EfficientNetB3 were competitive in detecting AD but less effective for early cognitive decline (83% accuracy). For multiclass classification, CNN-based architectures excelled, achieving up to 98% accuracy. Custom CNN and VGG16 reached 89%, while Decision Tree achieved 86% and Random Forest struggled (64%). These results highlight the strength of CNNs in capturing complex patterns in imaging data, while traditional ML models remain robust for binary tasks. Key indicators of cognitive decline included hippocampal atrophy and cortical thinning, supported by clinical tests and CSF biomarkers. Genetic markers contributed modestly but improved overall performance when combined with imaging and clinical data.
