@@ -301,14 +301,14 @@ Overall, our framework outperforms prior studies in both binary and multiclass A
 ### Comparison with Existing Studies
 | Reference     | Used Models                  | Binary Classification Accuracy                | Multiclass Classification Accuracy |
 | ------------- | ---------------------------- | --------------------------------------------- | ---------------------------------- |
-| Fahim1        | CNN                          | 94%                                           | 74.5%                              |
-| Fahim2        | SVM, RF, KNN, LR, DT         | RF 90.51%                                     | -                                  |
-| Fahim17       | Decision Tree, Fuzzy systems | 87.08%                                        | 93.95%                             |
-| Fahim19       | RNN                          | 75%                                           | 81%                                |
-| Fahim36       | 3D CNN                       | 86%                                           | 0.6749 (GM), 0.3953 (MCC)          |
-| Fahim31       | RF, SVM, DT, etc.            | 92.14%                                        | -                                  |
-| Fahim32       | CNN, Dense NN                | Numerical 73.59%, Image 71.43%, Hybrid 74.89% | -                                  |
-| Fahim33       | LR, DT, RF, SVM, AdaBoost    | 86.8%                                         | -                                  |
+| Song et al. 2021        | CNN                          | 94%                                           | 74.5%                              |
+| El-Sappagh et al. 2021        | SVM, RF, KNN, LR, DT         | RF 90.51%                                     | -                                  |
+| Wang et al. 2024       | Decision Tree, Fuzzy systems | 87.08%                                        | 93.95%                             |
+| Lee et al. 2019       | RNN                          | 75%                                           | 81%                                |
+| Tufail et al. 2022       | 3D CNN                       | 86%                                           | 0.6749 (GM), 0.3953 (MCC)          |
+| Amrutesh et al. 2022        | RF, SVM, DT, etc.            | 92.14%                                        | -                                  |
+| Buvari and Pettersson, 2020       | CNN, Dense NN                | Numerical 73.59%, Image 71.43%, Hybrid 74.89% | -                                  |
+| Baglat et al. 2020       | LR, DT, RF, SVM, AdaBoost    | 86.8%                                         | -                                  |
 | **Our Study** | **XGBoost, LGBM, CNN, Deep CNN**  | **LGBM 96%, XGBoost 95%**              | **CNN 98%, Deep CNN 95%**          |
 
 
